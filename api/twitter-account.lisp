@@ -65,7 +65,7 @@
 ;;Otherwise, the rate limit status for the requester's IP address is returned.")
 
 (define-command application/rate-limit-status (:get :rate-limit)
-    (twitter-app-uri "account/rate_limit_status.json")
+    (twitter-app-uri "application/rate_limit_status.json")
     "Returns the remaining number of API requests available to the requesting user before the API limit is reached for the current hour. ")
 
 (define-command account/end-session (:post :end-session)
@@ -121,7 +121,7 @@
 ;;----------------------- end of account methods -----------------------------------------------------------------------------
  
 (define-twitter-method verify-credentials (() &key (include-entities t)) :account/verify-credentials)
-(define-twitter-method rate-limit-status  (()  &key (resources nil))     :application/rate-limit-status )
+(define-twitter-method rate-limit-status  (() &key (resources nil))     :application/rate-limit-status)
 (define-twitter-method end-session        (())                           :account/end-session)
 
 
