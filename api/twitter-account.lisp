@@ -5,7 +5,8 @@
 ;; (:HOURLY-LIMIT . 350))
 
 (define-element rate-limit ()
-    "rate limit type"
+  "rate limit type"
+  (resources "" nil)
   (id         "" nil)
   (reset-time "" nil)
   (reset-time-in-seconds "" nil)
@@ -20,7 +21,7 @@
   (format t "~A: ~A~%" (rate-limit-remaining-hits ref) (rate-limit-hourly-limit ref)))
 
 (defun rate-limit-exceeded ()
-  (let ((rls (rate-limit-status)))
+  (let ((rls (rate-limit-status :resources "application")))
     (zerop (rate-limit-remaining-hits rls))))
 
 ;; end session element
@@ -63,7 +64,7 @@
 ;;If authentication credentials are provided, the rate limit status for the authenticating user is returned.  
 ;;Otherwise, the rate limit status for the requester's IP address is returned.")
 
-(define-command account/rate-limit-status (:get :rate-limit)
+(define-command application/rate-limit-status (:get :rate-limit)
     (twitter-app-uri "account/rate_limit_status.json")
     "Returns the remaining number of API requests available to the requesting user before the API limit is reached for the current hour. ")
 
@@ -120,7 +121,7 @@
 ;;----------------------- end of account methods -----------------------------------------------------------------------------
  
 (define-twitter-method verify-credentials (() &key (include-entities t)) :account/verify-credentials)
-(define-twitter-method rate-limit-status  (())                           :account/rate-limit-status )
+(define-twitter-method rate-limit-status  (()  &key (resources nil))     :application/rate-limit-status )
 (define-twitter-method end-session        (())                           :account/end-session)
 
 
