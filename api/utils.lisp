@@ -151,9 +151,10 @@
 		(alist->plist (cdr alist))))))
 
 (defun plist->uri-params (plist &optional escape-p)
+  ;;(format t "plist ~S~%" plist)
   (when (valid-plist plist)
     (cons (fix-attribute (string-downcase (as-string (first plist)))) (cons (to-uri-param (second plist) escape-p) (plist->uri-params (cddr plist) escape-p)))))
-		
+
 
 (defun plist-keywords (plist)
   (when (valid-plist plist)
@@ -207,6 +208,7 @@
   (ppcre:regex-replace "->" arg ":" ))
 
 (defun to-uri-param (arg escape-p)
+  ;;(format t "arg:~S ~S~%" arg escape-p)
   (if escape-p 
       (url-rewrite:url-encode (princ-to-string arg))
       (princ-to-string arg)))

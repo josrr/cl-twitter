@@ -13,6 +13,7 @@
   (remaining-hits "" nil)
   (hourly-limit   "" nil))
 
+
 (defmethod print-object ((ref rate-limit) stream)
   (format stream "#<TWITTER-RATE-LIMIT '~A:~A'>" (rate-limit-remaining-hits ref) (rate-limit-hourly-limit ref)))
 
@@ -22,7 +23,11 @@
 
 (defun rate-limit-exceeded ()
   (let ((rls (rate-limit-status :resources "application")))
-    (zerop (rate-limit-remaining-hits rls))))
+    (let ((rates (cdr (assoc :remaining
+			     (cdr (assoc ::/APPLICATION/RATE-LIMIT-STATUS
+					 (cdr (assoc :application
+						     (twitter::rate-limit-resources rls)))))))))
+      (values (zerop rates) rates))))
 
 ;; end session element
 ;;((:REQUEST . "/1/account/end_session.json") (:ERROR . "Logged out."))
@@ -118,12 +123,18 @@
   :description      "Optional. Maximum of 160 characters."
   :include_entities "When set to either true, t or 1, each tweet will include a node called entities")
 
+(define-command account/settings (:get :twitter-user)
+    (twitter-app-uri "account/settings.json")
+    "Gets the settings values.")
+
 ;;----------------------- end of account methods -----------------------------------------------------------------------------
- 
+
 (define-twitter-method verify-credentials (() &key (include-entities t)) :account/verify-credentials)
 (define-twitter-method rate-limit-status  (() &key (resources nil))     :application/rate-limit-status)
 (define-twitter-method end-session        (())                           :account/end-session)
 
+
+(define-twitter-method settings (()) :account/settings )
 
 (define-twitter-method update-profile-colors (() &key (profile-background-color nil)  (profile-text-color nil)  (profile-link-color nil)  
 			      (profile-sidebar-fill-color nil)  (profile-sidebar-border-color nil)  (include_entities t))     :account-update-profile-colors )

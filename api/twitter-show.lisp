@@ -37,8 +37,8 @@
   (format s "~&~A" *seperator*))
 
 (defmethod show ((search-result cl-twitter::search-result) &optional (s *standard-output*))
-  (format s "~&~150<Search: ~a results for ~a in ~s seconds~>" (search-metadata-count (search-metadata search-result))
-          (search-metadata-query (search-metadata search-result)) (search-metadata-completed-in (search-metadata search-result)))
+  (format s "~&~150<Search: ~a results for ~a in ~s seconds~>" (search-metadata-count (search-result-search-metadata search-result))
+          (search-metadata-query (search-result-search-metadata search-result)) (search-metadata-completed-in (search-result-search-metadata search-result)))
   (format s "~&~A" *seperator*))
 
 (defmethod show ((twitter-user twitter-user) &optional (s *standard-output*))

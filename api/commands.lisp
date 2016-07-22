@@ -111,8 +111,9 @@
    Returns multiple values: url auth post-params parse-type"
   (let ((cmd (get-command command)))
     ;;(progn 
-      ;;-see command on check-arguments
-      ;;(check-arguments cmd args))
+    ;;-see command on check-arguments
+    ;;(check-arguments cmd args))
+    ;;(format t "cmd:~S~%" cmd)
     (let ((newargs (lisp->twitter-plist args)))
       (case (command-method cmd)
 	(:get                    (get-command-request                 cmd newargs))
@@ -133,7 +134,8 @@
 
 
 (defun get-command-request (cmd args)
-  (values 
+  ;;(format t "cmd:~S args:~S~%" cmd args)
+  (values
    :get
    (generate-get-url cmd (strip-keyword-if #'(lambda (k) (member k '(:user :auth))) args))
    (or (getf args :auth) (user-http-auth (get-user (getf args :user nil))))
@@ -250,6 +252,7 @@
 	 
 
 (defun generate-get-url (cmd args)
+  ;;(format t "[~S<<>>~S]~%" (command-base-url cmd) (plist->uri-params args t))
   (format nil "~A?~{~A=~A~^&~}" (command-base-url cmd) (plist->uri-params args t)))
-	  
+
 

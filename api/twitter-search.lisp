@@ -72,15 +72,22 @@
 ;; Search API
 ;;
 
-(defun search-twitter (query &rest args &key (callback nil) (lang nil) (locale nil) (count nil)
-		       (max-id nil) (since-id nil) (until nil) (geocode nil) (show-user nil) (result-type nil) )
-  (declare (ignore callback lang locale count max-id since-id until geocode show-user result-type ))
+(defun search-twitter (query &rest args &key (callback nil) (lang nil) (locale nil) (count nil) (page nil)
+					  (rpp nil) (max-id nil) (since-id nil) (until nil) (geocode nil) (show-user nil) (result-type nil) )
+  (declare (ignore callback lang locale count page rpp max-id since-id until geocode show-user result-type ))
   (apply 'twitter-op :search :q query (rem-nil-keywords args '(:callback :geocode :lang :until))))
 
 ;;---------------------------------------------------------------------------------------------------------------------------
 
+(defun search-rate-limit-exceeded ()
+  (let ((rates (cdr (assoc :remaining
+			   (cdr (assoc :/SEARCH/TWEETS
+				       (cdr (assoc :search
+						   (rate-limit-resources
+						    (rate-limit-status :resources "search"))))))))))
+    (values (zerop rates) rates)))
 
-(defun do-search (query &key (max-pages 15) (test #'rate-limit-exceeded))
+(defun do-search (query &key (max-pages 15) (test #'search-rate-limit-exceeded))
   (let ((ht (make-hash-table  :test 'equal :size 1500)))
     (labels ((collect-it (slst)
 	       (dolist (item slst)

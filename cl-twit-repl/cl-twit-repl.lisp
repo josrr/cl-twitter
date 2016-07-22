@@ -35,7 +35,8 @@
   (set-pprint-dispatch 'cons         #'pp-show)
   (set-pprint-dispatch 'hash-table   #'pp-show)
   (install-new-dispatchers)
-  (unless (probe-file (access-file)) (repl-authenticate-user))
+  (unless (and (probe-file (access-file)) twitter:*twitter-user*)
+    (repl-authenticate-user))
   (cl-twitter::with-error-handler (:verbose nil)
     (verify-credentials)))
 
